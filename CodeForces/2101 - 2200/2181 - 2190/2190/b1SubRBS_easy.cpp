@@ -2,98 +2,79 @@
 #include <iostream>
 using namespace std;
 
-int t;
 const long int MAX_N = 200000;
-long int n, closeArr[MAX_N][2], openArr[MAX_N], barrierArr[MAX_N], dp[MAX_N];
-/*
-For close Arr:
-[i][0] - Default, right to left order.
-[i][1] - Inverse, left to right order.
-Both are inclusive.
-*/
-string sequence;
+int t;
+long int n;
+string brackets;
+long int dp[MAX_N][2];
 
 int main() {
     for (cin >> t; t > 0; t--) {
-        cin >> n >> sequence;
+        cin >> n >> brackets;
+        // long int curStack = 0;
+        // long int curSize = 0;
+        // for (long int i = n-1; i >= 0; i--) {
+        //     char curChar = brackets[i];
 
-        long int closeAmount = 0;
-        long int openAmount = 0;
-        long int curBarriers = 0;
-        for (long int i = 0; i < n; i++) {
-            char curChar = sequence[i];
-            if (curChar == '(') {
-                openAmount++;
-                openArr[i] = openAmount;
+        //     if (curChar == ')') {
+        //         if (i != n-1 && brackets[i+1] == '(') {
+        //             if (curStack != 0) {
+        //                 dp[i][0] = curSize+1;
+        //             }
+        //         }
+        //     }else {
+        //         curStack--;
+        //         curSize += 2;
+        //     }
+        // }
 
-                closeArr[i][0] = n/2 - closeAmount;
-                closeArr[i][1] = closeAmount;
-            }else {
-                closeArr[i][0] = n/2 - closeAmount;
-                closeAmount++;
-                closeArr[i][1] = closeAmount;
+        // curStack = 0;
+        // curSize = 0;
+        // long int ans = dp[0][0];
+        // for (long int i = 0; i < n; i++) {
+        //     char curChar = brackets[i];
 
-                openArr[i] = openAmount;
-            }
+        //     if (curChar == '(') {
+        //         curStack++;
+        //     }else {
+        //         curStack--;
+        //         curSize += 2;
+        //     }
+        // }
 
-            curChar = sequence[n-1-i];
-            if (curChar == ')') {
-                curBarriers++;
-                barrierArr[n-1-i] = curBarriers;
-            }else {
-                curBarriers--;
-                barrierArr[n-1-i] = barrierArr[n-i];
-            }
-        }
-
-        long int count = 0;
-        long int ans = 0;
+        long int _index = n;
+        long int _extraStacks = 0;
+        long int curStacks = 0;
         for (long int i = n-1; i >= 0; i--) {
-            char curChar = sequence[i];
-            count += (curChar == ')') ? 1 : -1;
-            if (count == 0) {
-                long int mainPivot = openArr[i]-1;
-                long int lm = i;
-                long int rm = n;
-                long int ansIndex = i;
-                cout << "\nStarted at " << i << " ~ ";
-                while (lm != rm-1) {
-                    long int midm = (lm+rm+1)/2;
-
-                    #pragma region Nested BS
-
-                    long int l = lm;
-                    long int r = rm;
-                    while (l != r-1) {
-                        long int mid = (l+r+1)/2;
-                        if (openArr[mid-1]-mainPivot >= closeArr[mid-1][0]) {
-                            r = mid;
-                        }else {
-                            l = mid;
-                            ansIndex = l;
-                        }
-                        cout << "\n" << l << " " << r << " " << openArr[mid-1]-mainPivot << " " << closeArr[mid-1][0] << " ";
-                    }
-                    cout << " && \n";
-
-                    #pragma endregion
-                    
-                    cout << ansIndex << " | ";
-
-                    if (min(openArr[ansIndex]-mainPivot, closeArr[ansIndex][0]) < barrierArr[i]+1) {
-                        lm = midm;
-                    }else {
-                        rm = midm;
-                    }
-                    cout << min(openArr[ansIndex]-mainPivot, closeArr[ansIndex][0]) << " ||| ";
-                }
-                if (openArr[ansIndex]-mainPivot <= barrierArr[i]) {
-
-                }else {
-                    ans = max(ans, i+min(openArr[ansIndex]-mainPivot, closeArr[ansIndex][0])*2);
-                }
+            char curChar = brackets[i];
+            if (curChar == '(') {
+                _index = i;
+                curStacks--;
+                _extraStacks = curStacks;
+            }else {
+                curStacks++;
+                dp[i][0] = _index;
+                dp[i][1] = _extraStacks;
             }
         }
-        cout << "Ans: " << ans << "\n";
+
+        long int ans = 0;
+        curStacks = 0;
+        for (long int i = 0; i < n; i++) {
+            char curChar = brackets[i];
+            if (curChar == ')') {
+                long int curSize = n-dp[i][0];
+                // cout << i << "\n";
+                // cout << dp[i][1] << "|" << curStacks << "|" << curSize << "\n";
+                if ((curSize-dp[i][1])/2 - (curStacks - dp[i][1]) >= 1) {
+                    ans = max(ans, i + curSize+dp[i][1]-curStacks);
+                }
+                curStacks--;
+            }else {
+                curStacks++;
+            }
+        }
+        cout << ((ans == 0) ? -1 : ans) << "\n";
     }
+    return 0;
 }

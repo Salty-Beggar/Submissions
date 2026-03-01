@@ -4,34 +4,26 @@ using namespace std;
 
 const long int MAX_N = 200000;
 int t;
-long int n, arr[MAX_N];
-long long int prefixSum[MAX_N+1];
-
-long long int query(long int l, long int r) { // [l, r[
-    return prefixSum[r] - prefixSum[l];
-}
+long int n, arr[MAX_N], dp[MAX_N][2]; /*
+0 - l
+1 - r
+*/
 
 int main() {
     for (cin >> t; t > 0; t--) {
         cin >> n;
-        prefixSum[0] = 0;
         for (long int i = 0; i < n; i++) {
             cin >> arr[i];
-            prefixSum[i+1] = arr[i];
-            prefixSum[i+1] += prefixSum[i];
+            long int curL = 2*(i+1)-2-arr[i];
+            dp[i][0] = (i == 0 || dp[i-1][0] < 0) ? curL : dp[i-1][0]+curL;
+            dp[i][1] = 2*(i+1)-arr[i];
         }
-
-        long long int ans = 0;
-        for (long int i = 0; i < n; i++) {
-            long int curItem = arr[i];
-            long int l = i;
-            long int r = n;
-            while (l != r-1) {
-                long int mid = (l+r)/2;
-                
-            }
+        long int maxSum = 0;
+        long int rSub = 0;
+        for (long int i = n-1; i >= 0; i--) {
+            rSub += dp[i][1];
+            maxSum = max(maxSum, dp[i][0] - rSub);
         }
-        
-        cout << ans << "\n";
     }
+    return 0;
 }
