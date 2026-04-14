@@ -14,6 +14,7 @@ int _gene(int gene) {
         case 'C': return 2; break;
         case 'T': return 3; break;
     }
+    return 0;
 }
 
 int main() {
