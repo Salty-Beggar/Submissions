@@ -10,31 +10,27 @@ int main() {
     cin >> k >> n;
 
     for (int i = 0; i < k; i++) {
-
-    }
-
-    for (int i = 0; i < k; i++) {
         int cows[n];
         for (int j = 0; j < n; j++) {
             cin >> cows[j];
         }
         for (int j = 0; j < n; j++) {
-            for (int k = i+1; k < n; k++) {
+            for (int q = j+1; q < n; q++) {
                 if (i == 0) {
-                    consistentPairs[j][k] = (cows[j] > cows[k]) ? 1 : ((cows[j] < cows[k]) ? -1 : 0);
+                    consistentPairs[j][q] = (cows[j] > cows[q]) ? 1 : ((cows[j] < cows[q]) ? -1 : 0);
                     continue;
-                } else if (consistentPairs[j][k] == 0) continue;
+                } else if (consistentPairs[j][q] == 0) continue;
 
-                int newPair = (cows[j] > cows[k]) ? 1 : ((cows[j] < cows[k]) ? -1 : 0);
-                if (newPair != consistentPairs[j][k]) consistentPairs[j][k] = 0;
+                int newPair = (cows[j] > cows[q]) ? 1 : ((cows[j] < cows[q]) ? -1 : 0);
+                if (newPair != consistentPairs[j][q]) consistentPairs[j][q] = 0;
             }
         }
     }
 
     int count = 0;
     for (int j = 0; j < n; j++) {
-        for (int k = j+1; k < n; k++) {
-            count += consistentPairs[j][k] != 0;
+        for (int q = j+1; q < n; q++) {
+            count += consistentPairs[j][q] != 0;
         }
     }
 
