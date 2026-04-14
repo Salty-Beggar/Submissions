@@ -35,7 +35,6 @@ int main() {
     }
 
     cout << count;
-    // RIGHT_NOW: Understand why the output is giving 5 instead of 4.
 
     return 0;
 }
