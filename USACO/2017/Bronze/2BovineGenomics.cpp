@@ -4,7 +4,8 @@
 
 using namespace std;
 
-int n, m;
+int n, m, geneBitmask[100];
+bool spotGenes[100];
 
 int _gene(int gene) {
     switch (gene) {
@@ -23,7 +24,22 @@ int main() {
         for (int j = 0; j < m; j++) {
             char gene = genome[j];
             int geneValue = _gene(gene);
+            geneBitmask[j] |= 1<<geneValue;
         }
     }
+    for (int i = 0; i < n; i++) {
+        string genome;
+        cin >> genome;
+        for (int j = 0; j < m; j++) {
+            char gene = genome[j];
+            int geneValue = _gene(gene);
+            if ((geneBitmask[j] & (1<<geneValue)) != 0) spotGenes[j] = true;
+        }
+    }
+    int count = 0;
+    for (int i = 0; i < m; i++) {
+        count += !spotGenes[i];
+    }
+    cout << count;
     return 0;
 }
