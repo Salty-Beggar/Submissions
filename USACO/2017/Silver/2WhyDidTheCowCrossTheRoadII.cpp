@@ -44,7 +44,6 @@ int main() {
                 for (int i = 0; i < n; i++) {
                     triplets[count] |= 1ll << (genomesSrc[i][a] * 1 + genomesSrc[i][b] * 4 + genomesSrc[i][c] * 16);
                 }
-                if (count == 3) cout << triplets[count] << "\n";    
                 count++;
             }
         }
