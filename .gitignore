@@ -1,1 +1,3 @@
 **/*.cppout
+**/*.out
+**/*.test
