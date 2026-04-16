@@ -1,3 +1,4 @@
+
 #include <cstdio>
 #include <iostream>
 
@@ -7,40 +8,12 @@ int n, k;
 int consistentPairs[20][20];
 
 int main() {
-    freopen("gymnastics.in", "r", stdin);
-    freopen("gymnastics.out", "w", stdout);
+    // freopen("gymnastics.in", "r", stdin);
+    // freopen("gymnastics.out", "w", stdout);
 
     cin >> k >> n;
-    int cows2[k][n];
-    for (int i = 0; i < k; i++) {
-        for (int j = 0; j < n; j++) {
-            cin >> cows2[i][j];
-        }
-    }
-    int cows[k][n];
-    for (int i = 0; i < k; i++) {
-        for (int j = 0; j < n; j++) {
-            int curCow = cows2[i][j];
-            cows[i][curCow-1] = n-j;
-        }
-    }
 
-    int count = 0;
-    for (int a = 0; a < n; a++) {
-        for (int b = a+1; b < n; b++) {
-            bool isConsistent = true;
-            int dir = cows[0][a] < cows[0][b];
-            for (int i = 0; i < k; i++) {
-                if (cows[i][a] == cows[i][b] || (cows[i][a] < cows[i][b]) != dir) {
-                    isConsistent = false;
-                    break;
-                }
-            }
-            count += isConsistent;
-        }
-    }
-
-    /* for (int i = 0; i < k; i++) {
+    for (int i = 0; i < k; i++) {
         int cows[n];
         for (int j = 0; j < n; j++) {
             cin >> cows[j];
@@ -63,7 +36,7 @@ int main() {
         for (int q = j+1; q < n; q++) {
             count += consistentPairs[j][q] != 0;
         }
-    } */
+    }
 
     cout << count;
 
