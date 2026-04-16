@@ -1,6 +1,7 @@
 
 #include <string>
 #include <iostream>
+#include <cstdio>
 
 using namespace std;
 
@@ -18,6 +19,8 @@ int _gene(char gene) {
 }
 
 int main() {
+    freopen("cownomics.in", "r", stdin);
+    freopen("cownomics.out", "w", stdout);
     cin >> n >> m;
 
     for (int i = 0; i < n; i++) {

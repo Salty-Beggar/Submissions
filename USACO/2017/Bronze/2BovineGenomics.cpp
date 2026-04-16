@@ -1,22 +1,25 @@
 
 #include <iostream>
 #include <string>
+#include <cstdio>
 
 using namespace std;
 
-int n, m;
+int n, m, geneBitmask[100], spotGenes[100];
 
 int _gene(int gene) {
     switch (gene) {
-        case 'A': return 0; break;
-        case 'G': return 1; break;
-        case 'C': return 2; break;
-        case 'T': return 3; break;
+        case 'A': return 0;
+        case 'G': return 1;
+        case 'C': return 2;
     }
-    return 0;
+    return 3;
 }
 
 int main() {
+    freopen("cownomics.in", "r", stdin);
+    freopen("cownomics.out", "w", stdout);
+
     cin >> n >> m;
     for (int i = 0; i < n; i++) {
         string genome;

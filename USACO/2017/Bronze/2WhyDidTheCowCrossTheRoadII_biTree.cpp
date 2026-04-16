@@ -1,5 +1,6 @@
 
 #include <iostream>
+#include <cstdio>
 
 using namespace std;
 
@@ -20,6 +21,9 @@ void update(int pos, int value) {
 }
 
 int main() {
+    freopen("circlecross.in", "r", stdin);
+    freopen("circlecross.out", "w", stdout);
+
     for (int i = 0; i < 26; i++) {
         startingPoints[i] = -1;
     }
