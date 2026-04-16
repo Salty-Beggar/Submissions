@@ -4,8 +4,7 @@
 
 using namespace std;
 
-int n, m, geneBitmask[100];
-bool spotGenes[100];
+int n, m;
 
 int _gene(int gene) {
     switch (gene) {
