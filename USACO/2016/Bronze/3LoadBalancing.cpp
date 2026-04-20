@@ -11,8 +11,8 @@ long int b;
 vector<pair<long int, long int>> xOrderedPos, yOrderedPos;
 
 int main() {
-    // freopen("balancing.in", "r", stdin);
-    // freopen("balancing.out", "w", stdout);
+    freopen("balancing.in", "r", stdin);
+    freopen("balancing.out", "w", stdout);
 
     cin >> n >> b;
     for (int i = 0; i < n; i++) {
@@ -34,21 +34,19 @@ int main() {
         pair<long int, long int> curXPos = xOrderedPos[i];
         int leftAmount = i;
         int rightAmount = n-i; 
-        int curGroup = 1;
+        // cout << leftAmount << rightAmount << "man\n";
         for (int j = 0; j < n; j++) {
-            if (j != n-1 && yOrderedPos[j].second == yOrderedPos[j+1].second) {
-                curGroup++;
-                continue;
-            }
             pair<long int, long int> curYPos = yOrderedPos[j];
-            if (i == 0 || curYPos.first >= xOrderedPos[i-1].first) {
-                rightAmount -= curGroup;
+            // cout << yOrderedPos[j].first << "," << yOrderedPos[j].second << "\n";
+            if (i == 0 || curYPos.first > xOrderedPos[i-1].first) {
+                rightAmount--;
                 // minMaxCows = min(minMaxCows, max( max(leftAmount, rightAmount), max(i-leftAmount, n-i-rightAmount) ));
             }else {
-                leftAmount -= curGroup;
+                leftAmount--;
             }
+            if (j != n-1 && yOrderedPos[j].second == yOrderedPos[j+1].second) continue;
+            // cout << leftAmount << " " << rightAmount << " " << i-leftAmount << " " << n-i-rightAmount << "\n";
             minMaxCows = min(minMaxCows, max( max(leftAmount, rightAmount), max(i-leftAmount, n-i-rightAmount) ));
-            curGroup = 1;
         }
     }
     cout << minMaxCows;
