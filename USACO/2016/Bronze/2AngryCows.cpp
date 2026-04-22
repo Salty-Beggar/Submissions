@@ -22,15 +22,15 @@ int main() {
     }
     sort(bales.begin(), bales.end());
 
-    curSoonBlows.push({bales[0], 1});
-    curLateBlows.push({bales[0], 1});
+    /* curSoonBlows.push({bales[0], 1}); */
+
+    pair<long int, int> soonestBlow = {bales[0], 1};
     int maxBlows = 1;
+    int curBlows = 1;
     for (int i = 1; i < n; i++) {
         int curRadius = 1;
-        while (curSoonBlows.top().first <= bales[i]-curRadius) {
-            
-        }
-        while (curLateBlows.top().first+curLateBlows.top().second <= bales[i]) {
+        long int curBale = bales[i];
+        if (soonestBlow.first+soonestBlow.second <= curBale) {
             
         }
     }
