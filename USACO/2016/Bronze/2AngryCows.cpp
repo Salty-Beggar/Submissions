@@ -37,6 +37,7 @@ int main() {
             soonestBlow = {curBale, curBlows};
         }else {
             curBlows = 1;
+            soonestBlow = {curBale, curBlows};
         }
     }
 
@@ -50,6 +51,7 @@ int main() {
             soonestBlow = {curBale, curBlows};
         }else {
             curBlows = 1;
+            soonestBlow = {curBale, curBlows};
         }
     }
 
@@ -72,7 +74,7 @@ int main() {
                     blowStack.pop();
                     curRadius++;
                 }
-                blowStack.push(make_tuple(get<0>(curTop), curRadius, curBale, curRadius-1, curExplodedBales));
+                blowStack.push(make_tuple(get<0>(curTop), curRadius, curBale, curRadius-2, curExplodedBales));
                 thirdCaseBlows[i][0] = curExplodedBales;
             }else {
                 curRadius = get<1>(curTop)+1;
@@ -80,18 +82,26 @@ int main() {
                 blowStack.push(make_tuple(get<0>(curTop), curRadius, curBale, get<3>(curTop)-1, curExplodedBales));
                 thirdCaseBlows[i][0] = curExplodedBales;
             }
+        }else {
+            blowStack.push(make_tuple(curBale, 1, curBale, 0, 0));
         }
     }
 
     while (!blowStack.empty()) blowStack.pop();
+    for (int i = 0; i < n; i++) {
+        bales[i] = bales[n-1]-bales[i]+1;
+    }
     reverse(bales.begin(), bales.end());
+    // cout << "\n";
+    blowStack.push(make_tuple(bales[0], 1, bales[0], 0, 0));
     for (int i = 1; i < n; i++) {
         long int curBale = bales[i];
         int curRadius = 1;
         auto curTop = blowStack.top();
         if (get<2>(curTop)+1 == curBale) {
             blowStack.pop();
-            if (get<3>(curTop) == 0) {
+            // cout << get<3>(curTop) << " &\n";
+            if (get<3>(curTop) == 0) { // RIGHT_NOW: THis check should be based on distance
                 curRadius = get<1>(curTop)+1;
                 int curExplodedBales = get<4>(curTop)+1;
                 while (!blowStack.empty() && get<0>(blowStack.top()) >= get<0>(curTop)-curRadius) {
@@ -100,7 +110,7 @@ int main() {
                     blowStack.pop();
                     curRadius++;
                 }
-                blowStack.push(make_tuple(get<0>(curTop), curRadius, curBale, curRadius-1, curExplodedBales));
+                blowStack.push(make_tuple(get<0>(curTop), curRadius, curBale, curRadius-2, curExplodedBales));
                 thirdCaseBlows[n-1-i][1] = curExplodedBales;
             }else {
                 curRadius = get<1>(curTop)+1;
@@ -108,13 +118,17 @@ int main() {
                 blowStack.push(make_tuple(get<0>(curTop), curRadius, curBale, get<3>(curTop)-1, curExplodedBales));
                 thirdCaseBlows[n-1-i][1] = curExplodedBales;
             }
+        }else {
+            blowStack.push(make_tuple(curBale, 1, curBale, 0, 0));
         }
     }
 
+    // cout << maxBlows << "\n";
     for (int i = 0; i < n; i++) {
-        maxBlows = max(maxBlows, thirdCaseBlows[i][0]+thirdCaseBlows[i][1]);
+        cout << thirdCaseBlows[i][0] << "," << thirdCaseBlows[i][1] << " | ";
+        maxBlows = max(maxBlows, thirdCaseBlows[i][0]+thirdCaseBlows[i][1]+1);
     }
-
+    // cout << "\n";
     cout << maxBlows;
 
 }
