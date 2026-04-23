@@ -63,6 +63,7 @@ int main() {
         long int curBale = bales[i];
         int curRadius = 1;
         auto curTop = blowStack.top();
+        /* if (get<3>(curTop) >= 2) cout << get<3>(curTop) << "\n"; */
         if (get<2>(curTop)+1 == curBale) {
             blowStack.pop();
             if (get<3>(curTop) == 0) {
@@ -101,16 +102,22 @@ int main() {
         if (get<2>(curTop)+1 == curBale) {
             blowStack.pop();
             // cout << get<3>(curTop) << " &\n";
-            if (get<3>(curTop) == 0) { // RIGHT_NOW: THis check should be based on distance
+            if (get<3>(curTop) == 0) {
                 curRadius = get<1>(curTop)+1;
+                int curOverhead = curRadius-2;
                 int curExplodedBales = get<4>(curTop)+1;
                 while (!blowStack.empty() && get<0>(blowStack.top()) >= get<0>(curTop)-curRadius) {
                     curTop = blowStack.top();
                     curExplodedBales += get<4>(curTop)+1;
                     blowStack.pop();
-                    curRadius++;
+                    curOverhead--;
+                    if (curOverhead <= 0) {
+                        curRadius++;
+                        curOverhead = curRadius-2;
+                    }
                 }
-                blowStack.push(make_tuple(get<0>(curTop), curRadius, curBale, curRadius-2, curExplodedBales));
+                blowStack.push(make_tuple(get<0>(curTop), curRadius, curBale, curOverhead, curExplodedBales));
+                cout << n-1-i << " " << curRadius-2 << "(\n";
                 thirdCaseBlows[n-1-i][1] = curExplodedBales;
             }else {
                 curRadius = get<1>(curTop)+1;
