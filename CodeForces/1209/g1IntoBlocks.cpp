@@ -2,6 +2,7 @@
 #include <iostream>
 #include <set>
 #include <map>
+#include <vector>
 
 using namespace std;
 
@@ -24,7 +25,7 @@ int main() {
 
     long int index = 0;
     for (long int value : values) {
-        compression[value] = index;
+        compression[value] = index++;
     }
 
     for (long int &block : blocks) {
@@ -40,7 +41,7 @@ int main() {
     for (long int curBlock : blocks) {
         if (!hasAppeared[curBlock]) {
             hasAppeared[curBlock] = true;
-            curCount += counts[curBlock];
+            curCount += counts[curBlock]-1;
             curMax = max(curMax, counts[curBlock]);
         }else {
             curCount--;
