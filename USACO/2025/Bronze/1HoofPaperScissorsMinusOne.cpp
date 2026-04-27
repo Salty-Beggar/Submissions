@@ -5,20 +5,21 @@
 using namespace std;
 
 const int MAX_N = 3000;
-int n, m, symbols[MAX_N][MAX_N], symbolWins[MAX_N];
+int n, m, winMap[MAX_N][MAX_N];
+
 
 int main() {
     cin >> n >> m;
+
     for (int i = 0; i < n; i++) {
         string curString;
         cin >> curString;
         for (int j = 0; j <= i; j++) {
-            int curValue = (curString[j] == 'D') ? 0 : (curString[j] == 'W' ? 1 : -1);
-
-            symbols[i][j] = -curValue;
-            symbols[j][i] = curValue;
-            if (curValue == -1) symbolWins[i]++;
-            else if (curValue == 1) symbolWins[j]++;
+            char curChar = curString[j];
+            int curValue = (curChar == 'W') ? 1 : -1;
+            if (curChar == 'D') curValue = 0;
+            winMap[i][j] = curValue;
+            winMap[j][i] = -curValue;
         }
     }
 
@@ -26,18 +27,14 @@ int main() {
         int a, b;
         cin >> a >> b;
         a--; b--;
-        if (a==b) cout << symbolWins[a]*n+(symbolWins[a]*n-symbolWins[a]);
-        else {
-            int commonOnes = 0;
-            for (int i = 0; i < n; i++)
-                if (symbols[a][i] == 1 && symbols[b][i] == 1) commonOnes++;
-            /* cout << symbolWins[a] << " " << symbolWins[b] << " " << commonOnes << "\n"; */
-
-            /* cout << (((symbolWins[a])*(symbolWins[b]))-doubleCounted); */
-            /* cout << commonOnes*n; */
-            cout << commonOnes*n+(commonOnes*n-commonOnes);
+        long int ans = 0;
+        long int usedHoofs = 1;
+        for (int i = 0; i < n; i++) {
+            if (winMap[i][a] == 1 && winMap[i][b] == 1) {
+                ans += n*2-usedHoofs;
+                usedHoofs += 2;
+            }
         }
-        cout << "\n";
+        cout << ans << "\n";
     }
-
 }
