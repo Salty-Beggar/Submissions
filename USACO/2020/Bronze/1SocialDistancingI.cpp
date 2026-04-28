@@ -1,17 +1,19 @@
 
+#include <cstdio>
 #include <string>
 #include <iostream>
 #include <vector>
 
 using namespace std;
 
-// PARA_AGORA: Ou há uma trifurcação, ou uma greedy approach
-
 long int n;
 string stalls;
 // vector<long int> middleGaps;
 
 int main() {
+    freopen("socdist1.in", "r", stdin);
+    freopen("socdist1.out", "w", stdout);
+
     cin >> n >> stalls;
 
     long int leftGap = 0;
@@ -42,7 +44,7 @@ int main() {
         }
     }
     rightGap = n-1-lastIndex;
-    if (rightGap == n-1) {
+    if (!doingMiddleCows) {
         cout << n-1;
         return 0;
     }
@@ -58,10 +60,12 @@ int main() {
             biggestGap = biggest2Gap;
         }else if (gapLeftInsert > gapRightInsert) {
             bestGapGreedy = gapLeftInsert;
-            leftGap--;
+            leftGap = leftGap/2;
         }else {
             bestGapGreedy = gapRightInsert;
-            rightGap--;
+            rightGap = rightGap/2;
         }
     }
+
+    cout << min(smallestGap, max(bestGapTrifurcated, bestGapGreedy));
 }
