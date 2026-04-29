@@ -1,19 +1,40 @@
 
 #include <iostream>
 #include <cstdio>
+#include <cmath>
 
-// Implement the mathematical algorithm
+using namespace std;
 
-int main() {
+int n;
+long int k;
 
-
-
+int main()
+{
+    
+    cin >> k >> n;
+    for (int i = 0; i < n; i++) {
+        long int x;
+        cin >> x;
+        if (x*(x+1)/2 >= k) {
+            // v(v+1) = k
+            // v^2 + v - 2k = 0
+            long int delta = ceil(sqrt(1+4*2*k));
+            cout << (delta-1)/2;
+        }else {
+            long long int delta = k + x*(x+1)/2;
+            long int v = floor(sqrt(delta));
+            if (v*v == delta) v--;
+            long int ans = 2*v-x-1;
+            long int remain = k-v*v+x*(x+1)/2;
+            // cout << remain << "|";
+            long int topLeaps = (remain-1)/v;
+            remain -= topLeaps*v;
+            long int bottomLeaps = (remain+x-1)/x;
+            ans += topLeaps+bottomLeaps;
+            // cout << v << "|";
+            cout << ans;
+        }
+        cout << "\n";
+    }
     return 0;
 }
-
-
-// A, v, h,
-// v(v+1)/2, v, X, D
-// v(v+1)/2 + v(v-1)/2 - X(X-1)/2 < K
-// v^2 < K + X(X-1)/2
-// A = 1+2+3+...+v = v(v+1)/2
