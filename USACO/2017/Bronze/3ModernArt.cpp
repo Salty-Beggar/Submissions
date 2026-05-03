@@ -1,5 +1,6 @@
 #include <iostream>
-#include <algorithm>;
+#include <algorithm>
+#include <cstdio>
 using namespace std;
 
 int n, arr[300], rangeDP[300][300];
@@ -20,6 +21,8 @@ void initializeDP() {
 }
 
 int main() {
+    freopen("art.in", "r", stdin);
+    freopen("art.out", "w", stdout);
     cin >> n;
     for (int i = 0; i < n; i++) cin >> arr[i];
     

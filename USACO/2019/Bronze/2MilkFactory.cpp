@@ -17,11 +17,14 @@ int _traverse(int i) {
         if (visited[child]) subTreeSizes[i] += subTreeSizes[child];
         else subTreeSizes[i] += _traverse(child);
     }
-    if (subTreeSizes[i] == n) ans = i;
+    if (subTreeSizes[i] == n) ans = (ans == -1) ? i : min(ans, i);
     return subTreeSizes[i];
 }
 
 int main() {
+    freopen("factory.in", "r", stdin);
+    freopen("factory.out", "w", stdout);
+
     cin >> n;
     for (int i = 0; i < n; i++) {
         adjList.push_back({});
@@ -30,7 +33,7 @@ int main() {
         int a, b;
         cin >> a >> b;
         a--; b--;
-        adjList[a].push_back(b);
+        adjList[b].push_back(a);
     }
 
     for (int i = 0; i < n; i++) {
@@ -39,5 +42,5 @@ int main() {
         }
     }
 
-    cout << (ans == -1) ? -1 : ans+1;
+    cout << ((ans == -1) ? -1 : ans+1);
 }
