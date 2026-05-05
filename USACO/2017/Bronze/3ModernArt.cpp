@@ -1,33 +1,64 @@
+
+#include <string>
 #include <iostream>
-#include <algorithm>
 #include <cstdio>
+#include <vector>
+#include <algorithm>
+#include <set>
+
 using namespace std;
 
-int n, arr[300], rangeDP[300][300];
+// c - color amount
+const int MAX_N = 10, MAX_C = 9;
+int n, c = MAX_C, grid[MAX_N][MAX_N];
+int isColorPossible[MAX_C+1], colorPos[MAX_C+1][4]; /*
+0 - Hasn't appeared
+1 - Has appeared and is possible
+-1 - Hasn't appeared and isn't possible
+------------------
+0 - x1
+1 - y1
+2 - x2
+3 - y2
+*/
+vector<pair<int, bool>> rectRows, rectCols;
 
-void initializeDP() {
-    for (int i = 0; i < n; i++) {
-        rangeDP[i][i] = 1;
-    }
-    for (int j = 1; j < n; j++) {
-        for (int x = 0; x < n-j; x++) {
-            int y = x+j;
-            int leftBound = rangeDP[x+1][y] + ((arr[x] == arr[x+1] || arr[x] == arr[y]) ? 0 : 1);
-            int rightBound = rangeDP[x][y-1] + ((arr[y] == arr[x] || arr[y] == arr[y-1]) ? 0 : 1);
-            rangeDP[x][y] = min(leftBound, rightBound);
-            //cout << rangeDP[x][y];
-        }
-    }
-}
+
 
 int main() {
-    freopen("art.in", "r", stdin);
-    freopen("art.out", "w", stdout);
     cin >> n;
-    for (int i = 0; i < n; i++) cin >> arr[i];
-    
-    initializeDP();
-    cout << rangeDP[0][n-1];
-    
-    return 0;
+    for (int i = 0; i < n; i++) {
+        string curLine;
+        cin >> curLine;
+        for (int j = 0; j < n; j++) {   
+            int curChar = (int)(curLine[j]-'0');
+            isColorPossible[curChar] = 1;
+            colorPos[curChar][0] = min(colorPos[curChar][0], j);
+            colorPos[curChar][1] = min(colorPos[curChar][1], i);
+            colorPos[curChar][2] = max(colorPos[curChar][2], j);
+            colorPos[curChar][3] = max(colorPos[curChar][3], i);
+        }
+    }
+    for (int i = 1; i <= c; i++) {
+        if (isColorPossible[i]) {
+            // Inclusive
+            rectRows.push_back({colorPos[i][0], false});
+            rectCols.push_back({colorPos[i][2], false});
+            // Exclusive
+            rectRows.push_back({colorPos[i][1]+1, true});
+            rectCols.push_back({colorPos[i][3]+1, true});
+        }
+    }
+
+    sort(rectRows.begin(), rectRows.end());
+    sort(rectCols.begin(), rectCols.end());
+
+    // RIGHT_NOW: Create the bounding mechanism
+    for (int i = 0; i < n; i++) {
+        auto rowPointer = rectRows.begin();
+        for (int j = 0; j < n; j++) {
+            auto colPointer = rectCols.begin();
+        }
+    }
+
 }
