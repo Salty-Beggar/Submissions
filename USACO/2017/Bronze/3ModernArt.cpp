@@ -54,6 +54,7 @@ int main() {
     sort(rectCols.begin(), rectCols.end());
 
     // RIGHT_NOW: Create the bounding mechanism
+    
     for (int i = 0; i < n; i++) {
         auto rowPointer = rectRows.begin();
         for (int j = 0; j < n; j++) {
