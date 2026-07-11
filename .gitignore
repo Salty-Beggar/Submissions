@@ -1,3 +1,4 @@
 **/*.cppout
 **/*.out
 **/*.test
+**/*.bak
