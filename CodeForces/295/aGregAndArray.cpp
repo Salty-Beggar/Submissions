@@ -33,14 +33,14 @@ int main() {
         curMultiplier += operationIArr[i];
         long int curL = operations[i][0];
         long int curR = operations[i][1];
-        long long int curValue = curMultiplier*operations[i][2];
+        long long int curValue = ((long long int)curMultiplier)*((long long int) operations[i][2]);
         intervalArr[curL] += curValue;
         intervalArr[curR] -= curValue;
     } 
     long long int curAdd = 0;
     for (long int i = 0; i < n; i++) {
         curAdd += intervalArr[i];
-        cout << arr[i]+curAdd << " ";
+        cout << ((long long int) arr[i])+curAdd << " ";
     }
     cout << "\n";
     return 0;
