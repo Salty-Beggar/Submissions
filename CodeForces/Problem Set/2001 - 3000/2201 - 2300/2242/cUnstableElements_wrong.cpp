@@ -37,7 +37,7 @@ int main() {
             if (size_diff_up > 0 && size_diff_up % cur_size_count == 0) {
                 reachable_arr_amount++;
             }
-            else if (size_diff_down >= 0 && size_diff_down % cur_size_count == 0) {
+            else if (size_diff_down >= 0 && size_diff_down != cur_size_count*(cur_value - prev_value) && size_diff_down % cur_size_count == 0) {
                 reachable_arr_amount++;
             }
             cur_size -= cur_size_count*(cur_value - prev_value);
