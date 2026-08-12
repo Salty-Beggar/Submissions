@@ -14,8 +14,8 @@ void solve(long long index) {
     for (const long long child : adj_list[index]) {
         if (!visited[child]) {
             visited[child] = true;
-            dfs_order.push_back(i);
-            solve(i);
+            dfs_order.push(index);
+            solve(child);
         }
     }
 }
@@ -25,7 +25,7 @@ void kosajaru(long long index) {
         if (visited[child]) {
             visited[child] = false;
             scc_index[child] = curr_scc_index;
-            kosajaru(i);
+            kosajaru(child);
         }else if (scc_index[child] != curr_scc_index) {
             if (scc_index[child] == 0 || curr_scc_index == 0) {
                 scc_tree[scc_index[child]].push_back(curr_scc_index);
@@ -57,13 +57,14 @@ int main() {
         long long curr_node = dfs_order.top();
         dfs_order.pop();
         if (!visited[curr_node]) continue;
+        // cout << curr_node << " ";
+        visited[curr_node] = false;
         scc_index[curr_node] = curr_scc_index;
         kosajaru(curr_node);
         curr_scc_index++;
     }
 
     long long scc_n = curr_scc_index;
-
     if (scc_n == 1) {
         cout << "YES";
         return 0;
@@ -72,7 +73,15 @@ int main() {
     cout << "NO\n";
     for (long long i = 0; i < n; i++) {
         if (scc_index[i] != 0) {
-            
+            long long other_scc = scc_index[i];
+            for (const auto child : scc_tree[0]) {
+                if (child == other_scc) {
+                    cout << i+1 << " " << 1;
+                    return 0;
+                }
+            }
+            cout << 1 << " " << i+1;
+            return 0;
         }
     }
 
