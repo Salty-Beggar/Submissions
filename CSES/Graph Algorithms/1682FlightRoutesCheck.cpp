@@ -13,23 +13,25 @@ queue<long long> pendent_cities;
 void solve(long long curr_index) {
     flight_status[curr_index] = 2;
     for (const long long child : adj_list[curr_index]) {
-        if (child == 0 || flight_status[child] == 0) {
-            flight_status[curr_index] = 0;
-            continue;
-        }
-        if (flight_status[child] == 2) {
-            pendent_cities.push(curr_index);
-            return;
-        }
         if (flight_status[child] == -1) {
             solve(child);
+        }
+        if (child == 0 || flight_status[child] == 0) {
+            flight_status[curr_index] = 0;
+        }
+    }
+    if (flight_status[curr_index] == 2) {
+        for (const long long child : adj_list[curr_index]) {
+            if (flight_status[child] == 2) {
+                pendent_cities.push(curr_index);
+                return;
+            }
         }
     }
     if (flight_status[curr_index] == 2) flight_status[curr_index] = 1;
 }
 
 int main() {
-    // RIGHT_NOW: Make the pendent status work correctly.
     cin >> n >> m;
     for (long long i = 0; i < m; i++) {
         flight_status[i] = -1;
