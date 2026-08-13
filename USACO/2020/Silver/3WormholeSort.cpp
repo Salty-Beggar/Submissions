@@ -1,115 +1,113 @@
 
 #include <iostream>
 #include <cstdio>
-#include <algorithm>
-#include <vector>
 #include <queue>
 using namespace std;
 
-const long long MAX_N = 100000, MAX_W = 1000000000;
-
 struct edge {
     public:
-        long long u, v, w;
+    long long u, v, w;
     edge(long long u, long long v, long long w) : u(u), v(v), w(w) {}
-    bool operator<(const edge& other) const {
-        return w > other.w;
+    bool operator <(const edge& other) const {
+        return w < other.w;
     }
 };
 
-struct cc {
-    vector<long long> disjoint_set_weight;
-    public:
-        long long n;
-        priority_queue<edge> edges;
-        vector<long long> disjoint_set;
-    void initialize() {
-        for (long long i = 0; i < n; i++) {
-            disjoint_set.push_back(i);
-            disjoint_set_weight.push_back(0);
-        }
-    }
-    long long monarch(long long u) {
-        if (disjoint_set[u] == u) return u;
-        disjoint_set[u] = monarch(disjoint_set[u]);
-        return disjoint_set[u];
-    }
-    bool is_joined(long long u, long long v) {
-        return monarch(u) == monarch(v);
-    }
-    bool is_joined(edge edge) {
-        return monarch(edge.u) == monarch(edge.v);
-    }
-    void join(edge edge) {
-        join(edge.u, edge.v);
-    }
-    void join(long long u, long long v) {
-        u = monarch(u);
-        v = monarch(v);
-        if (is_joined(u, v)) return;
-        if (disjoint_set_weight[u] > disjoint_set_weight[v]) {
-            swap(u, v);
-        }else if (disjoint_set_weight[u] == disjoint_set_weight[v]) {
-            disjoint_set[u] = v;
-            disjoint_set_weight[v]++;
-        }
+const long long MAX_N = 100000, MAX_W = 1000000000;
+long long n, m, cows[MAX_N], cc_index[MAX_N], cc_count[MAX_N], disjoint_set[MAX_N], disjoint_set_weight[MAX_N];
+priority_queue<edge> edges;
+
+long long find(long long u) {
+    if (disjoint_set[u] == u) return u;
+    disjoint_set[u] = find(disjoint_set[u]);
+    return disjoint_set[u];
+}
+
+bool is_joined(long long u, long long v) {
+    return find(u) == find(v);
+}
+
+bool is_joined(edge edge) {
+    return is_joined(edge.u, edge.v);
+}
+
+void join(long long u, long long v) {
+    if (is_joined(u, v)) return;
+    if (disjoint_set_weight[u] > disjoint_set_weight[v]) {
+        swap(u, v);
+    }else if (disjoint_set_weight[u] == disjoint_set_weight[v]) {
         disjoint_set[u] = v;
+        disjoint_set_weight[v]++;
+        return;
     }
-};
+    disjoint_set[u] = v;
+}
 
-long long n, m, cc_n, cows[MAX_N], cows_cc_index[MAX_N];
-cc connected_components[MAX_N];
+void join(edge edge) {
+    join(edge.u, edge.v);
+}
 
 int main() {
+    // freopen("wormsort.in", "r", stdin);
+    // freopen("wormsort.out", "w", stdout);
     cin >> n >> m;
     for (long long i = 0; i < n; i++) {
-        cows_cc_index[i] = -1;
+        disjoint_set[i] = i;
+        cc_index[i] = -1;
+        // cc_count[i] = -1;
         cin >> cows[i];
         cows[i]--;
     }
-
-    long long curr_cc_index = 0;
+    
+    long long curr_cc_index = -1;
     for (long long i = 0; i < n; i++) {
-        if (cows_cc_index[i] == -1) {
-            long long curr_cc_n = 0;
-            while (cows_cc_index[cows[i]] == -1) {
-                cows_cc_index[cows[i]] = curr_cc_index;
-                curr_cc_n++;
-                i = cows[i];
-            }
-            connected_components[curr_cc_index].n = curr_cc_n;
-            connected_components[curr_cc_index].initialize();
+        long long curr_cow = cows[i];
+        if (cc_index[curr_cow] == -1) { 
             curr_cc_index++;
+            while (cc_index[curr_cow] == -1) {
+                // cout << curr_cc_index << " ";
+                cc_index[curr_cow] = curr_cc_index;
+                cc_count[curr_cc_index]++;
+                curr_cow = cows[curr_cow];
+            }
         }
     }
-    long long cc_n = curr_cc_index;
+    long long cc_n = curr_cc_index+1;
+
+    // for (long long i = 0; i < cc_n; i++) {
+    //     cout << cc_count[i] << " ";
+    // }
+    // cout << "\n";
 
     for (long long i = 0; i < m; i++) {
         long long u, v, w;
         cin >> u >> v >> w;
         u--; v--;
-        if (cows_cc_index[u] != cows_cc_index[v]) continue;
-        long long curr_cc_index = cows_cc_index[u];
-        connected_components[curr_cc_index].edges.push(edge(u, v, w));
+        edges.push(edge(u, v, w));
     }
 
+    // RIGHT_NOW: Do the binary search algorithm
     long long min_weight = MAX_W;
-    for (long long i = 0; i < cc_n; i++) {
-        cc curr_cc = connected_components[i];
-        long long mst_remain = curr_cc.n-1;
-        while (mst_remain > 0) {
-            edge top_edge = curr_cc.edges.top();
-            curr_cc.edges.pop();
-            // RIGHT_NOW: You're excluding the possibility of using edges between connected components.
-            cout << top_edge.u << " " << top_edge.v << "\n";
-            // if (curr_cc.is_joined(top_edge)) continue;
-            // curr_cc.join(top_edge);
-            // min_weight = min(min_weight, top_edge.w);
-            // mst_remain--;
+    for (long long i = 0; i < m; i++) {
+        edge top_edge = edges.top();
+        // cout << top_edge.u << " " << top_edge.v << " " << top_edge.w << "\n";
+        edges.pop();
+        if (
+            (
+                cc_count[cc_index[top_edge.u]] <= 1
+                && cc_count[cc_index[top_edge.v]] <= 1
+            )
+            || is_joined(top_edge)
+        ) {
+
+        }else {
+            min_weight = min(min_weight, top_edge.w);
         }
+        if (cc_index[top_edge.u] == cc_index[top_edge.v]) {
+            cc_count[cc_index[top_edge.u]]--;
+        }
+        join(top_edge);
     }
-
     cout << min_weight;
-
     return 0;
 }
