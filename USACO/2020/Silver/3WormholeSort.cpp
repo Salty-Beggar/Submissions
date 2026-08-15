@@ -1,21 +1,40 @@
 
 #include <iostream>
 #include <cstdio>
-#include <queue>
+#include <functional>
+#include <algorithm>
 using namespace std;
+
+const long long MAX_N = 100000;
 
 struct edge {
     public:
     long long u, v, w;
-    edge(long long u, long long v, long long w) : u(u), v(v), w(w) {}
-    bool operator <(const edge& other) const {
-        return w < other.w;
+    bool operator<(const auto& edge) const {
+        return w < edge.w;
     }
 };
 
-const long long MAX_N = 100000, MAX_W = 1000000000;
-long long n, m, cows[MAX_N], cc_index[MAX_N], cc_count[MAX_N], disjoint_set[MAX_N], disjoint_set_weight[MAX_N];
-priority_queue<edge> edges;
+long long 
+    n, m, cow_next[MAX_N], cc_index[MAX_N], 
+    cc_monarch[MAX_N], disjoint_set[MAX_N], 
+    disjoint_set_weight[MAX_N];
+edge edges[MAX_N];
+
+long long last_true(function<bool(long long)> func) {
+    long long l = 0, r = m;
+    while (l != r-1) {
+        long long mid = (l+r)/2;
+        if (func(mid)) {
+            l = mid;
+        }else {
+            r = mid;
+        }
+    }
+    return edges[l].w;
+}
+
+#pragma region Disjoint set
 
 long long find(long long u) {
     if (disjoint_set[u] == u) return u;
@@ -47,67 +66,56 @@ void join(edge edge) {
     join(edge.u, edge.v);
 }
 
+#pragma endregion
+
 int main() {
-    // freopen("wormsort.in", "r", stdin);
-    // freopen("wormsort.out", "w", stdout);
+    freopen("wormsort.in", "r", stdin);
+    freopen("wormsort.out", "w", stdout);
     cin >> n >> m;
-    for (long long i = 0; i < n; i++) {
-        disjoint_set[i] = i;
-        cc_index[i] = -1;
-        // cc_count[i] = -1;
-        cin >> cows[i];
-        cows[i]--;
-    }
     
-    long long curr_cc_index = -1;
     for (long long i = 0; i < n; i++) {
-        long long curr_cow = cows[i];
-        if (cc_index[curr_cow] == -1) { 
-            curr_cc_index++;
-            while (cc_index[curr_cow] == -1) {
-                // cout << curr_cc_index << " ";
-                cc_index[curr_cow] = curr_cc_index;
-                cc_count[curr_cc_index]++;
-                curr_cow = cows[curr_cow];
+        cc_index[i] = -1;
+        cin >> cow_next[i];
+        cow_next[i]--;
+    }
+
+    long long curr_cc_index = 0;
+    for (long long i = 0; i < n; i++) {
+        long long curr_cow = i;
+        long long curr_cow_pointer = curr_cow;
+        if (cc_index[curr_cow] != -1) continue;
+        do {
+            cc_monarch[curr_cow_pointer] = curr_cow;
+            cc_index[curr_cow_pointer] = curr_cc_index;
+            curr_cow_pointer = cow_next[curr_cow_pointer];
+        } while (curr_cow_pointer != curr_cow);
+        curr_cc_index++;
+    }
+    long long cc_n = curr_cc_index;
+
+    for (long long i = 0; i < m; i++) {
+        cin >> edges[i].u >> edges[i].v >> edges[i].w;
+        edges[i].u--;
+        edges[i].v--;
+    }
+    sort(edges, edges+m);
+
+    cout << last_true([](long long index) {
+        for (long long i = 0; i < n; i++) {
+            disjoint_set[i] = i;
+            disjoint_set_weight[i] = 0;
+        }
+        for (long long i = index; i < m; i++) {
+            join(edges[i]);
+        }
+        for (long long i = 0; i < n; i++) {
+            long long curr_monarch = cc_monarch[i];
+            // cout << cc_index[i] << "\n";
+            if (!is_joined(i, curr_monarch)) {
+                return false;
             }
         }
-    }
-    long long cc_n = curr_cc_index+1;
+        return true;
 
-    // for (long long i = 0; i < cc_n; i++) {
-    //     cout << cc_count[i] << " ";
-    // }
-    // cout << "\n";
-
-    for (long long i = 0; i < m; i++) {
-        long long u, v, w;
-        cin >> u >> v >> w;
-        u--; v--;
-        edges.push(edge(u, v, w));
-    }
-
-    // RIGHT_NOW: Do the binary search algorithm
-    long long min_weight = MAX_W;
-    for (long long i = 0; i < m; i++) {
-        edge top_edge = edges.top();
-        // cout << top_edge.u << " " << top_edge.v << " " << top_edge.w << "\n";
-        edges.pop();
-        if (
-            (
-                cc_count[cc_index[top_edge.u]] <= 1
-                && cc_count[cc_index[top_edge.v]] <= 1
-            )
-            || is_joined(top_edge)
-        ) {
-
-        }else {
-            min_weight = min(min_weight, top_edge.w);
-        }
-        if (cc_index[top_edge.u] == cc_index[top_edge.v]) {
-            cc_count[cc_index[top_edge.u]]--;
-        }
-        join(top_edge);
-    }
-    cout << min_weight;
-    return 0;
+    });
 }
