@@ -16,13 +16,13 @@ struct edge {
 };
 
 long long 
-    n, m, cow_next[MAX_N], cc_index[MAX_N], 
+    n, m, cow_by_pos[MAX_N], cc_index[MAX_N], 
     cc_monarch[MAX_N], disjoint_set[MAX_N], 
     disjoint_set_weight[MAX_N];
 edge edges[MAX_N];
 
 long long last_true(function<bool(long long)> func) {
-    long long l = 0, r = m;
+    long long l = 0, r = m+1;
     while (l != r-1) {
         long long mid = (l+r)/2;
         if (func(mid)) {
@@ -31,6 +31,7 @@ long long last_true(function<bool(long long)> func) {
             r = mid;
         }
     }
+    if (l == m) return -1;
     return edges[l].w;
 }
 
@@ -52,14 +53,16 @@ bool is_joined(edge edge) {
 
 void join(long long u, long long v) {
     if (is_joined(u, v)) return;
+    u = find(u);
+    v = find(v);
     if (disjoint_set_weight[u] > disjoint_set_weight[v]) {
         swap(u, v);
-    }else if (disjoint_set_weight[u] == disjoint_set_weight[v]) {
-        disjoint_set[u] = v;
+    }
+    disjoint_set[u] = v;
+    if (disjoint_set_weight[u] == disjoint_set_weight[v]) {
         disjoint_set_weight[v]++;
         return;
     }
-    disjoint_set[u] = v;
 }
 
 void join(edge edge) {
@@ -75,23 +78,28 @@ int main() {
     
     for (long long i = 0; i < n; i++) {
         cc_index[i] = -1;
-        cin >> cow_next[i];
-        cow_next[i]--;
+        cin >> cow_by_pos[i];
+        cow_by_pos[i]--;
     }
 
     long long curr_cc_index = 0;
     for (long long i = 0; i < n; i++) {
         long long curr_cow = i;
-        long long curr_cow_pointer = curr_cow;
         if (cc_index[curr_cow] != -1) continue;
+        long long curr_cow_pointer = curr_cow;
         do {
             cc_monarch[curr_cow_pointer] = curr_cow;
             cc_index[curr_cow_pointer] = curr_cc_index;
-            curr_cow_pointer = cow_next[curr_cow_pointer];
+            curr_cow_pointer = cow_by_pos[curr_cow_pointer];
         } while (curr_cow_pointer != curr_cow);
         curr_cc_index++;
     }
     long long cc_n = curr_cc_index;
+
+    // for (long long i = 0; i < n; i++) {
+    //     cout << cc_index[i] << " ";
+    // }
+    // cout << "\n";
 
     for (long long i = 0; i < m; i++) {
         cin >> edges[i].u >> edges[i].v >> edges[i].w;
@@ -106,11 +114,10 @@ int main() {
             disjoint_set_weight[i] = 0;
         }
         for (long long i = index; i < m; i++) {
-            join(edges[i]);
+            join(cow_by_pos[edges[i].u], cow_by_pos[edges[i].v]);
         }
         for (long long i = 0; i < n; i++) {
             long long curr_monarch = cc_monarch[i];
-            // cout << cc_index[i] << "\n";
             if (!is_joined(i, curr_monarch)) {
                 return false;
             }
