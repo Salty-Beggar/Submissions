@@ -5,12 +5,19 @@ using namespace std;
 
 const long long MAX_SIZE = 18;
 
-long long n, m, dp[MAX_SIZE][MAX_SIZE][2][2]
-// RIGHT_NOW: Continue doing the DP thing;
+long long n, m, dp[MAX_SIZE][2][MAX_SIZE][2];
+// Position, tight, count, leading zeroes. 
 string lower_str, upper_str;
 
-long long solve(long long index, long long digit, long long count, bool leading, bool bound, long long targ) {
-
+long long solve(string targ) {
+    while (targ.size() < MAX_SIZE) {
+        targ = "0"+targ;
+    }
+    for (long long k = 0; k <= 9; k++) {
+        for (long long i = MAX_SIZE-1; i >= 0; i--) {
+            
+        }
+    }
 }
 
 int main() {
@@ -23,8 +30,8 @@ int main() {
         for (long long i = 0; i < MAX_SIZE; i++) {
             long long upper_digit = upper_str[i]-'0';
             long long lower_digit = lower_str[i]-'0';
-            for (long long j = 1; j <= MAX_SIZE; j++) {
-
+            for (long long j = 0; j < MAX_SIZE; j++) {
+                
             }
         }
     }
