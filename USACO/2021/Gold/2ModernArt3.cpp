@@ -18,20 +18,23 @@ int main() {
     long long streak_index = -1;
     for (long long i = 0; i < n; i++) {
         cin >> arr[i];
-        if (arr[i] != curr_streak) {
-            if (streak_index != -1) {
-                dp[streak_index][i-1] = 1;
-            }
-            curr_streak = arr[i];
-            streak_index = i;
-        }
+        dp[i][i] = 1;
+        // if (arr[i] != curr_streak) {
+        //     if (streak_index != -1) {
+        //         dp[streak_index][i-1] = 1;
+        //     }
+        //     curr_streak = arr[i];
+        //     streak_index = i;
+        // }
     }
-    dp[streak_index][n-1] = 1;
+    // dp[streak_index][n-1] = 1;
     for (long long j = 0; j < n; j++) {
         for (long long i = 0; i < n-j; i++) {
             if (j != 0 && arr[i] == arr[i+j]) {
-                dp[i][i+j] = min(dp[i][i+j], dp[i+1][i+j-1]+1);
-                // RIGHT_NOW: Fazer a transiçao corretamente.
+                if (j != 1 && (arr[i+1] == arr[i] || arr[i+j-1] == arr[i]))
+                    dp[i][i+j] = min(dp[i][i+j], dp[i+1][i+j-1]);
+                else 
+                    dp[i][i+j] = min(dp[i][i+j], dp[i+1][i+j-1]+1);
             }
             for (long long k = i; k < i+j; k++) {
                 dp[i][i+j] = min(
