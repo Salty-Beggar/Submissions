@@ -16,31 +16,40 @@ long long contem(string word, string sub_word) {
     long long sub_repeat = -1;
     for (long long i = 0; i < n; i++) {
         if (word[i] != sub_word[sub_curr]) {
-            if (sub_repeat != -1 && word[i] == sub_word[sub_repeat]) {
+            cout << sub_curr << " " << sub_repeat << "\n";
+            if (sub_repeat != -1) {
                 sub_curr = sub_repeat+1;
                 sub_repeat -= sub_curr - sub_repeat;
+                sub_repeat++;
                 continue;
             }
             sub_repeat = -1;
-            // RIGHT_NOW: Ajustar o funcionamento da repetição.
             sub_curr = 0;
-            if (n-1-i < m) {
-                return 0;
+            if (word[i] == sub_word[0]) {
+                sub_curr = 1;
+                if (sub_word[1] == sub_word[0]) {
+                    sub_repeat = 0;
+                }
             }
+            // if (n-1-i < m) {
+            //     return 0;
+            // }
         }else {
+            if (sub_repeat != -1) {
+                if (sub_word[sub_repeat] == sub_word[sub_curr]) {
+                    sub_repeat++;
+                } else {
+                    sub_repeat = -1;
+                }
+            } else {
+                if (sub_word[sub_curr] == sub_word[0]) {
+                    sub_repeat = 0;
+                }
+            }
             sub_curr++;
             if (sub_curr == m) {
                 return n == m ? 2 : 1;
             }
-        }
-        if (sub_repeat != -1) {
-            if (sub_word[sub_curr] != sub_word[sub_repeat]) {
-                sub_repeat = -1;
-            }else {
-                sub_repeat++;
-            }
-        } else if (sub_word[sub_curr] == sub_word[0]) {
-            sub_repeat = 0;
         }
     }
 

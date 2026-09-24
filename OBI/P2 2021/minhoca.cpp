@@ -1,5 +1,3 @@
-// 50/100
-
 #include <vector>
 #include <iostream>
 using namespace std;
@@ -25,61 +23,60 @@ struct info {
 };
 
 info solve(long long index, long long prev) {
-    info biggest_info_1;
-    info biggest_info_2;
-    long long curr_cycle_amount = 1;
-    bool bifurcated = false;
-    vector<long long> equal_branch_sizes;
+    vector<info> child_infos;
+    info returned_info;
+    long long biggest_length_1 = -1;
+    long long biggest_length_sum = 0;
+    long long biggest_length_2 = -1;
     for (auto child : adj_list[index]) {
         if (child == prev) continue;
         info curr_info = solve(child, index);
-        if (biggest_info_1 < curr_info) {
-            bifurcated = false;
-            biggest_info_2 = biggest_info_1;
-            biggest_info_1 = curr_info;
-            curr_cycle_amount = biggest_info_2.amount * biggest_info_1.amount;
-        }
-        else if (biggest_info_1 == curr_info) {
-            if (!bifurcated) {
-                bifurcated = true;
-                equal_branch_sizes.clear();
-                equal_branch_sizes.push_back(biggest_info_1.amount);
-                curr_cycle_amount = 0;
+        if (curr_info.length >= biggest_length_1) {
+            if (biggest_length_1 != curr_info.length) {
+                returned_info = info(curr_info.length+1, curr_info.amount);
+                biggest_length_sum = 0;
+            } else {
+                returned_info = info(curr_info.length+1, returned_info.amount+curr_info.amount);
             }
-            for (auto value : equal_branch_sizes) {
-                curr_cycle_amount += value*curr_info.amount;
-            }
-            equal_branch_sizes.push_back(curr_info.amount);
-            biggest_info_1.amount += curr_info.amount;
+            biggest_length_2 = biggest_length_1;
+            biggest_length_1 = curr_info.length;
+            biggest_length_sum += curr_info.amount;
+        } else if (curr_info.length > biggest_length_2) {
+            biggest_length_2 = curr_info.length;
         }
-        else if (biggest_info_2 < curr_info) {
-            if (!bifurcated) {
-                curr_cycle_amount = biggest_info_2.amount * biggest_info_1.amount;
+        child_infos.push_back(curr_info);
+    }
+    if (biggest_length_1 == -1 && biggest_length_2 == -1) return info(1, 1);
+
+    long long curr_cycle_length = returned_info.length;
+    long long curr_cycle_amount = returned_info.amount;
+    if (biggest_length_1 == biggest_length_2) {
+        curr_cycle_length = biggest_length_1*2+1;
+        curr_cycle_amount = 0;
+        for (info child_info : child_infos) {
+            if (child_info.length == biggest_length_1) {
+                biggest_length_sum -= child_info.amount;
+                curr_cycle_amount += child_info.amount * biggest_length_sum;
             }
-            biggest_info_2 = curr_info;
         }
-        else if (biggest_info_2 == curr_info) {
-            if (!bifurcated) {
-                curr_cycle_amount += biggest_info_2.amount * biggest_info_1.amount;
+    }
+    else if (biggest_length_2 != -1) {
+        curr_cycle_length = biggest_length_1+biggest_length_2+1;
+        long long biggest_amount = -1;
+        curr_cycle_amount = 0;
+        for (info child_info : child_infos) {
+            if (child_info.length == biggest_length_1) {
+                biggest_amount = child_info.amount;
+            } else if (child_info.length == biggest_length_2) {
+                curr_cycle_amount += child_info.amount;
             }
-            biggest_info_2.amount += curr_info.amount;
         }
+        curr_cycle_amount *= biggest_amount;
     }
 
-    // cout << "Index: " << index+1 << "\n";
-    // cout << biggest_info_1.length << " " << biggest_info_1.amount 
-        // << " | " << biggest_info_2.length << " " << biggest_info_2.amount << "\n";
-        
-    if (bifurcated) {
-        // cout << curr_cycle_amount << " " << biggest_info_1.length*2+1 << "\n";
-        amount_per_cycle[biggest_info_1.length*2+1] 
-            += curr_cycle_amount;
-    } else {
-        // cout << curr_cycle_amount << " " << biggest_info_1.length+biggest_info_2.length+1 << "\n";
-        amount_per_cycle[biggest_info_1.length+biggest_info_2.length+1] 
-            += curr_cycle_amount;
-    }
-    return info(biggest_info_1.length+1, biggest_info_1.amount);
+    amount_per_cycle[curr_cycle_length] += curr_cycle_amount;
+
+    return returned_info;
 }
 
 int main() {
